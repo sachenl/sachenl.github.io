@@ -1,11 +1,11 @@
 # Site settings
-author: Zhiqiang sun
-title: 
+author: zhiqiang
+title: test
 header-img: img/home-bg.png
 email: sunzhiqiang04@gmail.com
-copyright_name: Zhiqiang sun
+copyright_name: zhiqiang
 description: > # this means to ignore newlines until "baseurl:"
-  
+  shortest
 baseurl: "" # the subpath of your site, e.g. /blog
 twitter_username: 
 github_username:  sachenl
