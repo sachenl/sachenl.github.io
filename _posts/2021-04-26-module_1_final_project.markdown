@@ -19,12 +19,11 @@ I make three main questions to solve the problem in this project.
 After evaluated the database, I will use the title, rating, gross, year, genres information. I slected the data from bom_movie_gross, IMDB_basics and IMDB_rating. Then I combined them into a new dataframe. 
 
 * First, I checked the market of all the movies from 2010 to 2018.
-![](https://www.dropbox.com/s/r642wpsxgml4iid/fig4.png?dl=0)
 
 The total domestic gross did not change much. However, the foreign gross increased in general. Also, the total amount of foreign gross of all movies is almost two times larger than the domestic gross.
+![](https://raw.githubusercontent.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/main/picture/fig1.png)
 
 * Second, I plot the sctters of rating and gross for all the movies. 
-![](https://www.dropbox.com/s/r642wpsxgml4iid/fig4.png?dl=0)
 The scatter of rating and gross earning for each movie from 2010 to 2018 shows that there is no obvious relationship between the world gross and rating of the movies. However, most of the high earning movie had high rating more than 6 but less than 9.
 
 * Third, I combined the data from bom_movie_gross and IMDB_basics by matching the tiltes. I then did the boxplot to all the movies seperated by different genres. 
