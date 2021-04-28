@@ -20,8 +20,10 @@ After evaluated the database, I will use the title, rating, gross, year, genres 
 
 * First, I checked the market of all the movies from 2010 to 2018.
 
-The total domestic gross did not change much. However, the foreign gross increased in general. Also, the total amount of foreign gross of all movies is almost two times larger than the domestic gross.
-![](https://raw.githubusercontent.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/main/picture/fig1.png)
+The total domestic gross did not change much. However, the foreign gross increased in general. Also, the total amount of foreign gross of all movies is almost [two times larger than the domestic gross.](https://raw.githubusercontent.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/main/picture/fig1.png)
+
+![fig1](https://raw.githubusercontent.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/main/picture/fig1.png)
+
 
 * Second, I plot the sctters of rating and gross for all the movies. 
 The scatter of rating and gross earning for each movie from 2010 to 2018 shows that there is no obvious relationship between the world gross and rating of the movies. However, most of the high earning movie had high rating more than 6 but less than 9.
