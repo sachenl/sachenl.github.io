@@ -20,7 +20,7 @@ After evaluated the database, I will use the title, rating, gross, year, genres 
 
 * First, I checked the market of all the movies from 2010 to 2018.
 
-The total domestic gross did not change much. However, the foreign gross increased in general. Also, the total amount of foreign gross of all movies is almost [two times larger than the domestic gross.](https://raw.githubusercontent.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/main/picture/fig1.png)
+The total domestic gross did not change much. However, the foreign gross increased in general. Also, the total amount of foreign gross of all movies is almost two times larger than the domestic gross.
 
 ![fig1](https://raw.githubusercontent.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/main/picture/fig1.png)
 
@@ -28,16 +28,22 @@ The total domestic gross did not change much. However, the foreign gross increas
 * Second, I plot the sctters of rating and gross for all the movies. 
 The scatter of rating and gross earning for each movie from 2010 to 2018 shows that there is no obvious relationship between the world gross and rating of the movies. However, most of the high earning movie had high rating more than 6 but less than 9.
 
+![fig2](https://github.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/blob/main/picture/fig2.png)
+
 * Third, I combined the data from bom_movie_gross and IMDB_basics by matching the tiltes. I then did the boxplot to all the movies seperated by different genres. 
 
 The boxplot show that the medium value of world gross for each genre's movies are less than 0.2e+09. In general, the top four genres based on gross are adventure, animation, Sci-Fi and action. There are a lot of movies in these genres earned more than 0.6e+09 which is more than other genres. For the average rating, there is no significant different types of movies are higher than others. This suggests that there is more chance to earn more money if we select movies in one or more of adventure, animation, Sci-Fi and action genres.
 
+![fig3-1](https://github.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/blob/main/picture/fig3.png)
+![fig3-2](https://github.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/blob/main/picture/fig3-2.png)
+
 Next, I plot the the number of genres in 200 highest gross earned and rating movies seperately. 
 The histograms show that in the top 200 gross earning movies, more than 25% of them are adventure movies and more than 20% are action movies. In the top 200 rating movies, 25% are drama movies and 14% are documentary movies. action and adventure movies take about 6%.
+![fig4](https://github.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/blob/main/picture/fig4.png)
 
 In 2018,  The adventure and action earned more money than others.
 
-
+![fig5](https://github.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/blob/main/picture/fig5.png)
 
 
 
