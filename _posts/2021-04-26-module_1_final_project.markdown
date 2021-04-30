@@ -11,7 +11,7 @@ The aim of this blog is to introducing how to solve the problem in final project
 **Questions for the visualization graph**
 I make three main questions to solve the problem in this project.
 1.  How does movie industry growth in these years? Print the graph of the domestic gross and foreign gross as well as the world gross for different years.
-2. What is average rating as well as the gross earning for different category movies in histogram? Print out the relationship between rating and gross earning?
+2. What is average rating as well as the gross earning for different category movies? Print out the relationship between rating and gross earning?
 3. What is the total gross and rating of moives making in world for different genres? What is the distribution of top 200 movies which highest earned gross or highest rating. What is the number in 2018?
 
 
