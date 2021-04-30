@@ -46,6 +46,7 @@ In 2018,  The adventure and action earned more money than others.
 ![fig5](https://raw.githubusercontent.com/sachenl/dsc-mod-1-project-v2-1-online-ds-sp-000/main/picture/fig5.png)
 
 
-In general, the Adventure and Action movies earned more money than other types of movies. If we want to focus on the earning of the movies, choosing adventure or action or the mixuture types containing these genres is a good chocie. Also, the rating for these two types are above the average. If we want to focus only the high rating, seleting drama and cocumentary movies is good choice. 
+In general, the Adventure and Action movies earned more money than other types of movies. If we want to focus on the earning of the movies, choosing adventure or action or the mixture types containing these genres is a good choice. Also, the rating for these two types are above the average. If we want to focus only the high rating, seleting drama and documentary movies is good choice. 
+
 
 
