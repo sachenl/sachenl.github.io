@@ -42,7 +42,7 @@ After the initial data polish, I checked the number of unique value for each of 
 
 I then drawed the distribution of each of the columns  which had more than 10 unique value to check if there is any outlier values.
 
-![](https://github.com/sachenl/dsc-phase-2-project/blob/main/pictures/fig1.png)
+![fig1](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig1.png)
 
 #The above figures show that there are multipal columns contain some outlier data. I then collected all the columns and remove them 
 to_modify = ['price', 'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot','sqft_above','sqft_basement']
