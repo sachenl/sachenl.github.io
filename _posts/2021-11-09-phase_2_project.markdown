@@ -85,7 +85,9 @@ df[(df.cc>.7) & (df.cc<1)]
 pairs                                                                      CC
 
 (sqft_living, sqft_above)	                             0.814755
+
 (renovated_30, is_renovated)	                 0.808098
+
 (month, year)                                                 	0.786899
 
 
