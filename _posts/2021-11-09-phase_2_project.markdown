@@ -44,7 +44,7 @@ I then drawed the distribution of each of the columns  which had more than 10 un
 
 ![fig1](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig1.png)
 
-#The above figures show that there are multipal columns contain some outlier data. I then collected all the columns and remove them 
+The above figures show that there are multipal columns contain some outlier data. I then collected all the columns and remove the outlier by 1.5 x   IQR
 to_modify = ['price', 'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot','sqft_above','sqft_basement']
 for col in to_modify:
     Q1 = df_precessed[col].quantile(0.25)
@@ -52,62 +52,19 @@ for col in to_modify:
     IQR = Q3 - Q1
     df_precessed = df_precessed[(df_precessed[col] >= Q1 - 1.5*IQR) & (df_precessed[col] <= Q3 + 1.5*IQR)]
 
-### check the data after modification
-fig, axs = plt.subplots(2,5, figsize = (15,6))
-plt1 = sns.boxplot(df_precessed['price'], ax = axs[0,0])
-plt2 = sns.boxplot(df_precessed['bedrooms'], ax = axs[0,1])
-plt3 = sns.boxplot(df_precessed['bathrooms'], ax = axs[0,2])
-plt4 = sns.boxplot(df_precessed['sqft_living'], ax = axs[0,3])
-plt5 = sns.boxplot(df_precessed['sqft_lot'], ax = axs[0,4])
-plt1 = sns.boxplot(df_precessed['floors'], ax = axs[1,0])
-plt2 = sns.boxplot(df_precessed['sqft_above'], ax = axs[1,1])
-plt3 = sns.boxplot(df_precessed['sqft_basement'], ax = axs[1,2])
-plt4 = sns.boxplot(df_precessed['age_sold'], ax = axs[1,3])
+![](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig2.png)
 
 The data looks much better now with very few of outlier numbers.
 
 
-#  In order to check the relationship between the price with most of the columns with few unique numbers, 
-# I plot their relations in seperate figures.
-plt.figure(figsize=(20, 12))
-plt.subplot(4,3,1)
-sns.boxplot(x = 'bedrooms', y = 'price', data = df_precessed)
-plt.subplot(4,3,2)
-sns.boxplot(x = 'floors', y = 'price', data = df_precessed)
-plt.subplot(4,3,3)
-sns.boxplot(x = 'waterfront', y = 'price', data = df_precessed)
-plt.subplot(4,3,4)
-sns.boxplot(x = 'view', y = 'price', data = df_precessed)
-plt.subplot(4,3,5)
-sns.boxplot(x = 'condition', y = 'price', data = df_precessed)
-plt.subplot(4,3,6)
-sns.boxplot(x = 'grade', y = 'price', data = df_precessed)
-plt.subplot(4,3,7)
+### In order to check the relationship between the price with most of the columns with few unique numbers,  I plot their relations in seperate figures.
+![](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig3.png)
 
-sns.boxplot(x = 'is_renovated', y = 'price', data = df_precessed)
-plt.subplot(4,3,8)
-sns.boxplot(x = 'renovated_10', y = 'price', data = df_precessed)
-plt.subplot(4,3,9)
-sns.boxplot(x = 'renovated_30', y = 'price', data = df_precessed)
-plt.subplot(4,3,10)
-sns.boxplot(x = 'bathrooms', y = 'price', data = df_precessed)
-plt.subplot(4,3,11)
-
-sns.boxplot(x = 'month', y = 'price', data = df_precessed)
-plt.show()
+The figures show that the house price have clear relationship with all of the features. However, there is few figures are pretty close to each other. 
 
 ### The scatter plot of each two columns shows in general how the feature realated to each other and if there is any obvious correlation between them.
-scatter_matrix = pd.plotting.scatter_matrix(
-    df_precessed,
-    figsize  = [20, 20],
-    marker   = ".",
-    s        = 0.2,
-    diagonal = "kde"
-)
 
-for ax in scatter_matrix.ravel():
-    ax.set_xlabel(ax.get_xlabel(), fontsize = 10, rotation = 90)
-    ax.set_ylabel(ax.get_ylabel(), fontsize = 10, rotation = 0)
+![](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig4.png)
 
 Base on the scatter figure above, there are several features correlated with each other. However, visual approach to finding correlation cannot be automated, so a numeric approach is a good next step.
 
@@ -121,11 +78,16 @@ df.columns = ['cc']
 df.drop_duplicates(inplace = True)
 df[(df.cc>.7) & (df.cc<1)]
 
+pairs                                                                      CC
+
+(sqft_living, sqft_above)	                             0.814755
+(renovated_30, is_renovated)	                 0.808098
+(month, year)                                                 	0.786899
+
+
 
 There are three pairs of features high related with each other. I need to remove at least one of the features in each pair. Comparing the last list, I decided to delete the columns sqft_above, renovated_30, year, month. 
 
-to_drop = ['sqft_above', 'renovated_30', 'year', 'month' ]
-df_precessed = df_precessed.drop(to_drop,axis  = 1 )
 
 
 # Regression
@@ -138,38 +100,18 @@ X = df_precessed.drop('price', axis  = 1)
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 print(len(X_train), len(X_test), len(y_train), len(y_test))
 
-#check heatmap of the data to find out the most correlated feature and make the base line
+I then checked the  heatmap of the data to find out the most correlated feature and make the base line
 
-heatmap_data = pd.concat([y_train, X_train], axis = 1)
-corr = heatmap_data.corr()
 
-#setup figure for heatmap
-fig, ax = plt.subplots(figsize = (15, 15))
+![fig5](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig5.png)
 
-### Plot a heatmap of the correlation matrix, with both numbers and colors indicating the correlations
-sns.heatmap(
-    # Specifies the data to be plotted
-    data=corr,
-    # The mask means we only show half the values,
-    # instead of showing duplicates. It's optional.
-    mask=np.triu(np.ones_like(corr, dtype=bool)),
-    # Specifies that we should use the existing axes
-    ax=ax,
-    # Specifies that we want labels, not just colors
-    annot=True,
-    # Customizes colorbar appearance
-    cbar_kws={"label": "Correlation", "orientation": "horizontal", "pad": .2, "extend": "both"}
-    )
 
-    #Customize the plot appearance
-    ax.set_title("Heatmap of Correlation Between Attributes (Including Price)");
+
+
+Base on the heatmap above, the feature most strongly correlated with the price is sqft_living. So I selected the grade to make the baseline of linear regression fitting.
     
 most_correlated_feature = "grade"
-
-
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import cross_validate, ShuffleSplit
-
+```
 baseline_model = LinearRegression()
 
 
@@ -181,10 +123,12 @@ baseline_scores = cross_validate(
     y=y_train,
     return_train_score=True,
     cv=splitter
-)
+```
 
-print("Train score:     ", baseline_scores["train_score"].mean())
-print("Validation score:", baseline_scores["test_score"].mean())
+Based on the ''grade'' feature,  I make the baseline_model and find the score of trainning and validation score. 
+
+Train score:      0.30102469477546406
+Validation score: 0.3146285604628449
 
 Because we are using the .score method of LinearRegression, these are r-squared scores. That means that each of them represents the amount of variance of the target ( price) that is explained by the model's features (currently just the number of grade) and parameters (intercept value and coefficient values for the features).
 
@@ -192,8 +136,9 @@ In general this seems like not a very strong model. However, it is getting nearl
 
 We will need to add more features to the model to check if there is any improvement.
 
-## Build a Model with All Numeric Features 
+### Build a Model with All Numeric Features 
 
+```
 second_model = LinearRegression()
 
 second_model_scores = cross_validate(
@@ -203,23 +148,33 @@ second_model_scores = cross_validate(
     return_train_score=True,
     cv=splitter
 )
+```
+Current Model
+Train score:      0.5322810924227112
+Validation score: 0.5360008901543358
 
-print("Current Model")
-print("Train score:     ", second_model_scores["train_score"].mean())
-print("Validation score:", second_model_scores["test_score"].mean())
-print()
-print("Baseline Model")
-print("Train score:     ", baseline_scores["train_score"].mean())
-print("Validation score:", baseline_scores["test_score"].mean())
+Baseline Model
+Train score:      0.30102469477546406
+Validation score: 0.3146285604628449
+
 
 Our second model got better scores on the training data, and better scores on the validation data. However, I still want to continue to check how each feature work in general. Then I choose to check the coef value of the regression
 
 ###  Select the Best Combination of Features
+I checked the linear regression fitness for all the features first.
+
+```
 import statsmodels.api as sm
 
 sm.OLS(y_train, sm.add_constant(X_train)).fit().summary()
+```
+
+The regresssion results showed as below
+
+![](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/regression.png)
 
 ### Base on the p value, I temperaly select 10 columns in which p<0.05
+```
 select_cat = ['bedrooms', 'bathrooms','sqft_living', 'sqft_lot', 'floors', 'waterfront', 'view', 'condition', 'grade',
               'sqft_basement', 'renovated_10', 'age_sold']
 X_train_third = X_train[select_cat]
@@ -233,22 +188,27 @@ third_model_scores = cross_validate(
     return_train_score=True,
     cv=splitter
 )
+```
 
-print("current Model")
-print("Train score:     ", third_model_scores["train_score"].mean())
-print("Validation score:", third_model_scores["test_score"].mean())
+current Model
+Train score:      0.53218577738026
+Validation score: 0.536160764472546
 
-print("second Model")
-print("Train score:     ", second_model_scores["train_score"].mean())
-print("Validation score:", second_model_scores["test_score"].mean())
-print()
-print("Baseline Model")
-print("Train score:     ", baseline_scores["train_score"].mean())
-print("Validation score:", baseline_scores["test_score"].mean())
+second Model
+Train score:      0.5322810924227112
+Validation score: 0.5360008901543358
+
+Baseline Model
+Train score:      0.30102469477546406
+Validation score: 0.3146285604628449
+
 
 There is a little bit improve on the prediction, but very little.
- I tried to selecting Features with sklearn.feature_selection
 
+
+ I also tried to selecting Features with sklearn.feature_selection
+
+```
 from sklearn.feature_selection import RFECV
 from sklearn.preprocessing import StandardScaler
 
@@ -266,6 +226,8 @@ selector.fit(X_train_for_RFECV, y_train)
 print("Was the column selected?")
 for index, col in enumerate(X_train.columns):
     print(f"{col}: {selector.support_[index]}")
+```
+
 Was the column selected?
 bedrooms: True
 bathrooms: True
@@ -292,6 +254,7 @@ Now, I remade the third model features to best_features to validate the final mo
 #Base on the train score and validation score, the best columns until now is the third model. 
 
 
+```
 X_train_final = X_train[select_cat]
 X_test_final = X_test[select_cat]
 
@@ -304,10 +267,12 @@ final_model.fit(X_train_final, y_train)
 #Score the model on X_test_final and y_test
 #use the built-in .score method
 final_model.score(X_test_final, y_test)
+```
 
 
 # Validation
 ## import the mse to check the mse value
+```
 from sklearn.metrics import mean_squared_error
 
 mean_squared_error(y_test, final_model.predict(X_test_final), squared=False)
@@ -315,15 +280,35 @@ mean_squared_error(y_test, final_model.predict(X_test_final), squared=False)
 #check the distribution of price in test data
 y_test.hist(bins = 100)
 y_test.mean()
+```
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/download.png)
 
-""" This means that for an average house price, this algorithm will be off by about $130331 thousands. Given that the mean value of house price is 445683, the algorithm can patially set the price. However, we still want to have a human double-check and adjust these prices rather than just allowing the algorithm to set them. """
+The mse value is 130331. The mean of the price is 445683.
 
-print(pd.Series(final_model.coef_, index=X_train_final.columns, name="Coefficients"))
-print()
-print("Intercept:", final_model.intercept_)
+ This means that for an average house price, this algorithm will be off by about $130331 thousands. Given that the mean value of house price is 445683, the algorithm can patially set the price. However, we still want to have a human double-check and adjust these prices rather than just allowing the algorithm to set them. 
+ I then printed the final coefficients of each features. 
+
+bedrooms         -17734.819592
+bathrooms         22333.279123
+sqft_living         104.197345
+sqft_lot             -7.266691
+floors            17895.940478
+waterfront       140605.432066
+view              30502.795377
+condition         20867.253746
+grade            104396.240619
+sqft_basement        10.140670
+renovated_10      46690.148414
+age_sold           2655.946868
+Name: Coefficients, dtype: float64
+
+Intercept: -670009.6123770761
+
+The coefficients of the selected features shows that the sqft_living is the most important features which affected the house price since the sqft_living is normally more than 1000. The affection of features sqft_lot and sqft_basement are very small even they are negtive numbers.  The affection of grade on the house is very big also. Also, if the house is renovated within 10 years, the price will increased 46690 dollars. If there is waterfront of the house, the price of the house will increase dramtically with 140605.
 
 
-
+### For the validation, I first plot the scatter plot of Predicted Price vs the Actual Price
+```
 preds = final_model.predict(X_test_final)
 fig, ax = plt.subplots(figsize =(5,5))
 
@@ -337,25 +322,41 @@ ax.scatter(y_test, preds, alpha=0.5)
 ax.set_xlabel("Actual Price")
 ax.set_ylabel("Predicted Price")
 ax.legend();
+```
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig6.png)
 
+### I then tested the residuals by qqplot
+
+```
 import scipy.stats as stats
 residuals = (y_test - preds)
 sm.graphics.qqplot(residuals, dist=stats.norm, line='45', fit=True);
 
-fig, ax = plt.subplots()
 
+```
+
+
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig7.png)
+
+
+
+```
+fig, ax = plt.subplots()
 ax.scatter(preds, residuals, alpha=0.5)
 ax.plot(preds, [0 for i in range(len(X_test))])
 ax.set_xlabel("Predicted Value")
 ax.set_ylabel("Actual - Predicted Value");
+```
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig8.png)
 
-The validation of prediction and real data shows that the prediction price for most house whose price is low (20% of the max price) is close to the real price. qqplot showes that the house price is not well normal distributed but peaked in the middle. There is a lot of shift of prediction price when the house value increase especialy when house price is more than 2 million.
+The validation of prediction and real data shows that the prediction price for most house whose price is low (20% of the max price) is close to the real price.  qqplot showes that the house price is well predicted when the house price is not very high. However, for the high value price house, the prediction is not very acturate. There is a lot of shift of prediction price when the house value increase especialy when house price is more than 2 million. 
 
 
 ## Summary
 
 Our model predicted well the house price on many of the features. The Coefficients are like between bedrooms -17734, bathrooms 22333, sqft_living 104, sqft_lot -7, floors 17895, waterfront 140605 , view 30502, condition 20867 , grade 104396, sqft_basement 10 , renovated_10 46690, age_sold 2655,
 
-To the buyer, they can estimate the price of the house base on the features of the house. To the seller, if they want to sell the house in a better value, they can try to renovate the house and make water front if possible.
+To the buyer, they can estimate the price of the house base on the features of the house. 
+To the seller, if they want to sell the house in a better value, they can try to renovate the house and make water front if possible. They can also doing something to improve the grade level of the house which can also increase the house value dramaticlly. 
 
 
