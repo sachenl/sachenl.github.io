@@ -45,12 +45,14 @@ I then drawed the distribution of each of the columns  which had more than 10 un
 ![fig1](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig1.png)
 
 The above figures show that there are multipal columns contain some outlier data. I then collected all the columns and remove the outlier by 1.5 x   IQR
+```
 to_modify = ['price', 'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot','sqft_above','sqft_basement']
 for col in to_modify:
     Q1 = df_precessed[col].quantile(0.25)
     Q3 = df_precessed[col].quantile(0.75)
     IQR = Q3 - Q1
     df_precessed = df_precessed[(df_precessed[col] >= Q1 - 1.5*IQR) & (df_precessed[col] <= Q3 + 1.5*IQR)]
+```
 
 ![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig2.png)
 
@@ -70,6 +72,7 @@ Base on the scatter figure above, there are several features correlated with eac
 
 
 ### I tested the pairs of feature with correlation more than 0.75.
+```
 df = df_precessed.corr().abs().stack().reset_index().sort_values(0, ascending = False)
 df['pairs'] = list(zip(df.level_0, df.level_1))
 df.set_index(['pairs'], inplace = True)
@@ -77,6 +80,7 @@ df.drop(columns = ['level_0', "level_1"], inplace  = True)
 df.columns = ['cc']
 df.drop_duplicates(inplace = True)
 df[(df.cc>.7) & (df.cc<1)]
+```
 
 pairs                                                                      CC
 
@@ -94,11 +98,13 @@ There are three pairs of features high related with each other. I need to remove
 Until now, I finished the polish of the all the features and then I will split the data to trainning and testing parts to do the fitting.
 
 ### split the data to training and testing part
+```
 from sklearn.model_selection import train_test_split
 y = df_precessed['price']
 X = df_precessed.drop('price', axis  = 1)
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 print(len(X_train), len(X_test), len(y_train), len(y_test))
+```
 
 I then checked the  heatmap of the data to find out the most correlated feature and make the base line
 
