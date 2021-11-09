@@ -52,19 +52,19 @@ for col in to_modify:
     IQR = Q3 - Q1
     df_precessed = df_precessed[(df_precessed[col] >= Q1 - 1.5*IQR) & (df_precessed[col] <= Q3 + 1.5*IQR)]
 
-![](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig2.png)
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig2.png)
 
 The data looks much better now with very few of outlier numbers.
 
 
 ### In order to check the relationship between the price with most of the columns with few unique numbers,  I plot their relations in seperate figures.
-![](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig3.png)
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig3.png)
 
 The figures show that the house price have clear relationship with all of the features. However, there is few figures are pretty close to each other. 
 
 ### The scatter plot of each two columns shows in general how the feature realated to each other and if there is any obvious correlation between them.
 
-![](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig4.png)
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig4.png)
 
 Base on the scatter figure above, there are several features correlated with each other. However, visual approach to finding correlation cannot be automated, so a numeric approach is a good next step.
 
@@ -103,7 +103,7 @@ print(len(X_train), len(X_test), len(y_train), len(y_test))
 I then checked the  heatmap of the data to find out the most correlated feature and make the base line
 
 
-![fig5](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig5.png)
+![fig5](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig5.png)
 
 
 
@@ -171,7 +171,7 @@ sm.OLS(y_train, sm.add_constant(X_train)).fit().summary()
 
 The regresssion results showed as below
 
-![](http://https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/regression.png)
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/regression.png)
 
 ### Base on the p value, I temperaly select 10 columns in which p<0.05
 ```
