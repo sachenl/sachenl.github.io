@@ -1,7 +1,7 @@
 ---
 layout: post
 title:      "Phase 2 Project"
-date:       2021-11-09 05:25:58 +0000
+date:       2021-11-09 00:25:59 -0500
 permalink:  phase_2_project
 ---
 
@@ -26,21 +26,9 @@ We have had the house selling records for the last few years. With these data, I
 4. build the linear regression model.
 5. check how the features can contribute to the house change.
 
-## import all the necessary library
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import numpy as np
-import warnings
-warnings.filterwarnings("ignore")
+## After reviewing the data, I load the house data in to the dataframe and did some necessary modification
 
-## Loading the Data
-In the cell below, I load the house data into a dataframe and checked it's dimension and datatype.
-
-df = pd.read_csv("data/kc_house_data.csv")
-df.head()
-
-I need to steply remove and polish most of the columns which is not contribute to the price of house
+I steply removed and polished most of the columns which is not contribute to the price of house
 1. The id is not related to the price
 2. Split the date file to month and year.
 3. Since the lat and long data is high related to the zipcode, I need to remove them.
@@ -48,50 +36,13 @@ I need to steply remove and polish most of the columns which is not contribute t
 5. Remove the sqft_living15 and sqft_lot15 from columns.
 6. Change the yr_built to the age of house at sold time
 7. Change the yr_renovated to if the house is renovated and is the renovated within 10 and 30 years at sold.
-8. Remove the 'sqft_living15', 'sqft_lot15'
-
-df = df.drop(['id', 'lat', 'long'], axis  = 1)
-df.zipcode = [int(x/10) for x in df.zipcode ]
-month = []
-year = []
-for date in df.date:
-    month.append(int(date.split('/')[0]))
-    year.append(int (date.split('/')[2]))
-df['month'] = month
-df['year'] = (year)
-
-df.fillna(value = 0, inplace=True)
-
-df['is_renovated'] = [1  if x > 0 else 0 for x in df['yr_renovated']  ]
-df['renovated_age'] = df['year'] - df['yr_renovated']
-df['renovated_age2'] = [0 if x >1000 else x for x in df['renovated_age']]
-df['renovated_10'] = [1 if (x <10) & (x >0)  else 0 for x in df['renovated_age2']]
-df['renovated_30'] = [1 if (x <30) & (x >0) else 0 for x in df['renovated_age2']]
-df['age_sold'] = df['year'] - df['yr_built']
-
-#df['price'] = df['price']/(df['price'].max())
-df['sqft_basement'] = [float(x) if x != '?' else 0.0 for x in df['sqft_basement']]
-
-to_drop = ['date', 'sqft_living15', 'sqft_lot15' ,  'yr_renovated','yr_built', 'renovated_age', 'renovated_age2'  ] #, 
-df_precessed = df.drop(to_drop, axis  = 1)
-df_precessed = df_precessed[(df_precessed.bedrooms<33) & (df_precessed.age_sold >0)]
-df_precessed.head()
-
-## I checked the number of unique value for each of the columns
-df_precessed.nunique()
 
 
-### I then drawed the distribution of each of the columns  which had more than 10 unique value to check if there is any outlier values.
-fig, axs = plt.subplots(2,5, figsize = (15,6))
-plt1 = sns.boxplot(df_precessed['price'], ax = axs[0,0])
-plt2 = sns.boxplot(df_precessed['bedrooms'], ax = axs[0,1])
-plt3 = sns.boxplot(df_precessed['bathrooms'], ax = axs[0,2])
-plt4 = sns.boxplot(df_precessed['sqft_living'], ax = axs[0,3])
-plt5 = sns.boxplot(df_precessed['sqft_lot'], ax = axs[0,4])
-plt1 = sns.boxplot(df_precessed['floors'], ax = axs[1,0])
-plt2 = sns.boxplot(df_precessed['sqft_above'], ax = axs[1,1])
-plt3 = sns.boxplot(df_precessed['sqft_basement'], ax = axs[1,2])
-plt4 = sns.boxplot(df_precessed['age_sold'], ax = axs[1,3])
+After the initial data polish, I checked the number of unique value for each of the columns. Some of the columns like price, sqft_living, sqft_lot had more than hundres of unique values which can be consider to be continues values. However, some of the features contain only few unique values. 
+
+I then drawed the distribution of each of the columns  which had more than 10 unique value to check if there is any outlier values.
+
+![](http://)
 
 #The above figures show that there are multipal columns contain some outlier data. I then collected all the columns and remove them 
 to_modify = ['price', 'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot','sqft_above','sqft_basement']
