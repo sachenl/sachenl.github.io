@@ -192,7 +192,8 @@ sm.OLS(y_train, sm.add_constant(X_train)).fit().summary()
 ```
 
 
-
+Results
+The Coefficient of all the features show how each of the feature affect the house price. Briefly, for the house size, the sqft_living had value 114.5637 which suggests that increasing 1 sqrt of living area, the house pirce will increase 114 dollars. However, the sqft_lot and sqft_basement had negtive correlation to the house price even though the correlation value is very low compare to sqft_living. The number is bedrooms had negtive negtive correlation to the house price. More bathrooms, floors, views and conditions will increase the house price in general. Grade 4-7 decrease the house price and Grade 8-10 increase the house price a lot by around 500000 each level. To the zipcode, the house in some area is much higer than others. The house price in month March to July is obviously higher than other months. If there is what front, the house price will increase by 128000. If the house is renovated, the house price can increasing arount 7540. If the renovated is within 10 years, the house price can increase around 51400.
 
 
 # Validation
@@ -227,28 +228,10 @@ y_test.mean()
 ```
 ![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/download.png)
 
-The mse value is 130331. The mean of the price is 445683.
+The mse value is 123127. The mean of the price is 445683.
 
  This means that for an average house price, this algorithm will be off by about $130331 thousands. Given that the mean value of house price is 445683, the algorithm can patially set the price. However, we still want to have a human double-check and adjust these prices rather than just allowing the algorithm to set them. 
- I then printed the final coefficients of each features. 
 
-bedrooms         -17734.819592
-bathrooms         22333.279123
-sqft_living         104.197345
-sqft_lot             -7.266691
-floors            17895.940478
-waterfront       140605.432066
-view              30502.795377
-condition         20867.253746
-grade            104396.240619
-sqft_basement        10.140670
-renovated_10      46690.148414
-age_sold           2655.946868
-Name: Coefficients, dtype: float64
-
-Intercept: -670009.6123770761
-
-The coefficients of the selected features shows that the sqft_living is the most important features which affected the house price since the sqft_living is normally more than 1000. The affection of features sqft_lot and sqft_basement are very small even they are negtive numbers.  The affection of grade on the house is very big also. Also, if the house is renovated within 10 years, the price will increased 46690 dollars. If there is waterfront of the house, the price of the house will increase dramtically with 140605.
 
 
 ### For the validation, I first plot the scatter plot of Predicted Price vs the Actual Price
@@ -298,9 +281,8 @@ The validation of prediction and real data shows that the prediction price for m
 
 ## Summary
 
-Our model predicted well the house price on many of the features. The Coefficients are like between bedrooms -17734, bathrooms 22333, sqft_living 104, sqft_lot -7, floors 17895, waterfront 140605 , view 30502, condition 20867 , grade 104396, sqft_basement 10 , renovated_10 46690, age_sold 2655,
+The Coefficient of all the features show how each of the feature affect the house price. Briefly, for the house size, the sqft_living had value 114.5637 which suggests that increasing 1 sqrt of living area, the house pirce will increase 114 dollars. However, the sqft_lot and sqft_basement had negtive correlation to the house price even though the correlation value is very low compare to sqft_living. The number is bedrooms had negtive negtive correlation to the house price. More bathrooms, floors, views and conditions will increase the house price in general. Grade 4-7 decrease the house price and Grade 8-10 increase the house price a lot by around 500000 each level. To the zipcode, the house in some area is much higer than others. The house price in month March to July is obviously higher than other months. If there is what front, the house price will increase by 128000. If the house is renovated, the house price can increasing arount 7540. If the renovated is within 10 years, the house price can increase around 51400.
 
-To the buyer, they can estimate the price of the house base on the features of the house. 
-To the seller, if they want to sell the house in a better value, they can try to renovate the house and make water front if possible. They can also doing something to improve the grade level of the house which can also increase the house value dramaticlly. 
+To the buyer, We had our prediction model which can predict the house price and give buyer some suggestion about the price they want. However, the predicted house price is higher than the selling price when the price is over 700000. To the seller, our model give them some suggestion how to increase the potential selling value. For example, they can try to renovate the house and make water front if possible and increas the grade of the house.
 
 
