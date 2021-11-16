@@ -64,14 +64,12 @@ The data looks much better now with very few of outlier numbers.
 
 The figures show that the house price have clear relationship with all of the features. However, there is few figures are pretty close to each other. 
 
-### The scatter plot of each two columns shows in general how the feature realated to each other and if there is any obvious correlation between them.
-
-![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig4.png)
-
-Base on the scatter figure above, there are several features correlated with each other. However, visual approach to finding correlation cannot be automated, so a numeric approach is a good next step.
 
 
-### I tested the pairs of feature with correlation more than 0.75.
+To avoid the high correlated features, I filtered the features and find the pair of features with correlation value between 0.7 and 1. 
+
+
+### I tested the pairs of feature with correlation more than 0.70.
 ```
 df = df_precessed.corr().abs().stack().reset_index().sort_values(0, ascending = False)
 df['pairs'] = list(zip(df.level_0, df.level_1))
@@ -95,6 +93,22 @@ pairs                                                                      CC
 There are three pairs of features high related with each other. I need to remove at least one of the features in each pair. Comparing the last list, I decided to delete the columns sqft_above, renovated_30, year, month. 
 
 
+Since there is some columns with only few number of unique values, I need to catalize the features.
+```
+to_cat = ['bedrooms','bathrooms', 'floors' ,'view','condition','grade','zipcode','month',]
+df_cat = pd.DataFrame()
+for col in to_cat:
+    df_cat = pd.concat([df_cat, pd.get_dummies(df_precessed[col], prefix = col)], axis = 1)
+to_cat_2 = ['waterfront','is_renovated','renovated_10']
+df_cat_2 = pd.DataFrame()
+for col in to_cat_2:
+    df_cat_2 = pd.concat([df_cat_2, pd.get_dummies(df_precessed[col], prefix = col, drop_first=True)], axis = 1)
+df_precessed = df_precessed.drop(to_cat,axis  = 1 )
+df_precessed = df_precessed.drop(to_cat_2,axis  = 1 )
+df_precessed = pd.concat([df_precessed, df_cat, df_cat_2], axis = 1)
+df_precessed.head()
+```
+
 
 # Regression
 Until now, I finished the polish of the all the features and then I will split the data to trainning and testing parts to do the fitting.
@@ -108,158 +122,81 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 print(len(X_train), len(X_test), len(y_train), len(y_test))
 ```
 
-I then checked the  heatmap of the data to find out the most correlated feature and make the base line
 
+Next， I start to build the regression model
+### Build a Model with All Numeric Features 
 
-![fig5](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig5.png)
-
-
-
-
-Base on the heatmap above, the feature most strongly correlated with the price is sqft_living. So I selected the grade to make the baseline of linear regression fitting.
-    
-most_correlated_feature = "grade"
 ```
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_validate, ShuffleSplit
+
 baseline_model = LinearRegression()
 
 
 splitter = ShuffleSplit(n_splits=3, test_size=0.25, random_state=0)
+model = LinearRegression()
 
-baseline_scores = cross_validate(
-    estimator=baseline_model,
-    X=X_train[[most_correlated_feature]],
-    y=y_train,
-    return_train_score=True,
-    cv=splitter
-```
-
-Based on the ''grade'' feature,  I make the baseline_model and find the score of trainning and validation score. 
-
-Train score:      0.30102469477546406
-Validation score: 0.3146285604628449
-
-Because we are using the .score method of LinearRegression, these are r-squared scores. That means that each of them represents the amount of variance of the target ( price) that is explained by the model's features (currently just the number of grade) and parameters (intercept value and coefficient values for the features).
-
-In general this seems like not a very strong model. However, it is getting nearly identical performance on training subsets compared to the validation subsets, explaining around 50% of the variance both times.
-
-We will need to add more features to the model to check if there is any improvement.
-
-### Build a Model with All Numeric Features 
-
-```
-second_model = LinearRegression()
-
-second_model_scores = cross_validate(
-    estimator=second_model,
+model_scores = cross_validate(
+    estimator=model,
     X=X_train,
     y=y_train,
     return_train_score=True,
     cv=splitter
 )
+
+print("Current Model")
+print("Train score:     ", model_scores["train_score"].mean())
+print("Validation score:", model_scores["test_score"].mean())
+print()
+)
 ```
 Current Model
-Train score:      0.5322810924227112
-Validation score: 0.5360008901543358
-
-Baseline Model
-Train score:      0.30102469477546406
-Validation score: 0.3146285604628449
+Train score:      0.5897185649583689
+Validation score: 0.5858295197121807
 
 
-Our second model got better scores on the training data, and better scores on the validation data. However, I still want to continue to check how each feature work in general. Then I choose to check the coef value of the regression
+The score for the trainning and testing data are very similar to each other and not bad. Hoever, some of the features might not be suitable for the linear regression. 
+I then tried to selecting Features with sklearn.feature_selection.
 
 ###  Select the Best Combination of Features
 I checked the linear regression fitness for all the features first.
 
+```
+from sklearn.feature_selection import RFECV
+from sklearn.preprocessing import StandardScaler
+
+# Importances are based on coefficient magnitude, so
+# we need to scale the data to normalize the coefficients
+X_train_for_RFECV = StandardScaler().fit_transform(X_train)
+
+model_for_RFECV = LinearRegression()
+
+# Instantiate and fit the selector
+selector = RFECV(model_for_RFECV, cv=splitter)
+selector.fit(X_train_for_RFECV, y_train)
+
+# Print the results
+print("Was the column selected?")
+for index, col in enumerate(X_train.columns):
+    print(f"{col}: {selector.support_[index]}")
+```
+
+The results show that all of the features are necessary for the regression. 
+
+
+I then did the linear regression with OLS.
 ```
 import statsmodels.api as sm
 
 sm.OLS(y_train, sm.add_constant(X_train)).fit().summary()
 ```
 
-The regresssion results showed as below
-
-![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/regression.png)
-
-### Base on the p value, I temperaly select 10 columns in which p<0.05
-```
-select_cat = ['bedrooms', 'bathrooms','sqft_living', 'sqft_lot', 'floors', 'waterfront', 'view', 'condition', 'grade',
-              'sqft_basement', 'renovated_10', 'age_sold']
-X_train_third = X_train[select_cat]
-
-third_model = LinearRegression()
-
-third_model_scores = cross_validate(
-    estimator=third_model,
-    X=X_train_third,
-    y=y_train,
-    return_train_score=True,
-    cv=splitter
-)
-```
-
-current Model
-Train score:      0.53218577738026
-Validation score: 0.536160764472546
-
-second Model
-Train score:      0.5322810924227112
-Validation score: 0.5360008901543358
-
-Baseline Model
-Train score:      0.30102469477546406
-Validation score: 0.3146285604628449
 
 
-There is a little bit improve on the prediction, but very little.
 
 
- I also tried to selecting Features with sklearn.feature_selection
-
-```
-from sklearn.feature_selection import RFECV
-from sklearn.preprocessing import StandardScaler
-
-#Importances are based on coefficient magnitude, so
-#we need to scale the data to normalize the coefficients
-X_train_for_RFECV = StandardScaler().fit_transform(X_train)
-
-model_for_RFECV = LinearRegression()
-
-#Instantiate and fit the selector
-selector = RFECV(model_for_RFECV, cv=splitter)
-selector.fit(X_train_for_RFECV, y_train)
-
-#Print the results
-print("Was the column selected?")
-for index, col in enumerate(X_train.columns):
-    print(f"{col}: {selector.support_[index]}")
-```
-
-Was the column selected?
-bedrooms: True
-bathrooms: True
-sqft_living: True
-sqft_lot: True
-floors: True
-waterfront: True
-view: True
-condition: True
-grade: True
-sqft_basement: True
-zipcode: False
-is_renovated: False
-renovated_10: True
-age_sold: True
-
-The RFE methods give me the same selection of features above.
-
-The results showed that the auto sedlected features did not give better score than the third model.
-
-Now, I remade the third model features to best_features to validate the final model.
-
-
-#Base on the train score and validation score, the best columns until now is the third model. 
+# Validation
+## I build again the finial model. 
 
 
 ```
@@ -276,10 +213,9 @@ final_model.fit(X_train_final, y_train)
 #use the built-in .score method
 final_model.score(X_test_final, y_test)
 ```
-
-
-# Validation
+0.5771902162157758
 ## import the mse to check the mse value
+
 ```
 from sklearn.metrics import mean_squared_error
 
