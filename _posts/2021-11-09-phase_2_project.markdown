@@ -191,6 +191,11 @@ import statsmodels.api as sm
 sm.OLS(y_train, sm.add_constant(X_train)).fit().summary()
 ```
 
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig5-1.png)
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig5-2.png)
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig5-3.png)
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-2-project/main/pictures/fig5-4.png)
+
 
 Results
 The Coefficient of all the features show how each of the feature affect the house price. Briefly, for the house size, the sqft_living had value 114.5637 which suggests that increasing 1 sqrt of living area, the house pirce will increase 114 dollars. However, the sqft_lot and sqft_basement had negtive correlation to the house price even though the correlation value is very low compare to sqft_living. The number is bedrooms had negtive negtive correlation to the house price. More bathrooms, floors, views and conditions will increase the house price in general. Grade 4-7 decrease the house price and Grade 8-10 increase the house price a lot by around 500000 each level. To the zipcode, the house in some area is much higer than others. The house price in month March to July is obviously higher than other months. If there is what front, the house price will increase by 128000. If the house is renovated, the house price can increasing arount 7540. If the renovated is within 10 years, the house price can increase around 51400.
