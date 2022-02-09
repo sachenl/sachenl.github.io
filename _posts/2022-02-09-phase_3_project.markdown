@@ -1,7 +1,7 @@
 ---
 layout: post
 title:      "Phase 3 Project"
-date:       2022-02-09 05:06:30 +0000
+date:       2022-02-09 00:06:31 -0500
 permalink:  phase_3_project
 ---
 
@@ -46,7 +46,9 @@ for col in to_modify:
     df_precessed = df_precessed[(df_precessed[col] >= Q1 - 1.5*IQR) & (df_precessed[col] <= Q3 + 1.5*IQR)]
 ```
 
-![fig2]https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig2.png)
+
+![fig2](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig2.png)
+
 
 The data looks much better now with very few of outlier numbers.
 
