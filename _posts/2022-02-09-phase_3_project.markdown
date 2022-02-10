@@ -53,7 +53,8 @@ for col in to_modify:
 The data looks much better now with very few of outlier numbers.
 
 
-# Now the data was ready and we need to prepare and modeling the data with varies models.
+## Now the data was ready and we need to prepare and modeling the data with varies models.
+
 ### Plan
 
 #### 1. Perform a Train-Test Split
