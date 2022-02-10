@@ -37,6 +37,7 @@ Since the SyriaTel Customer Churn is a binary classification problem problem, I 
 ![fig1](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig1.png)
 
 The above figures show that there are multipal columns contain some outlier data. I then collected all the columns and remove the outlier by 1.5 x   IQR
+
 ```
 to_modify = ['price', 'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot','sqft_above','sqft_basement']
 for col in to_modify:
@@ -62,13 +63,17 @@ The data looks much better now with very few of outlier numbers.
 For a complete end-to-end ML process, we need to create a holdout set that we will use at the very end to evaluate our final model's performance.
 
 #### 2. Build and Evaluate several Model including Logistic Regression, k-Nearest Neighbors, Decision Trees, Randdom forest, Support Vector Machine.
+
 ##### For each of the model, we need several steps
+
     1. Build and Evaluate a base model
     2. Build and Evaluate Additional Logistic Regression Models
     3. Choose and Evaluate a Final Model
+    
 #### 3. Compare all the models and find the best model
 
 ### 1.  Prepare the Data for Modeling
+
 The target is Cover_Type. In the cell below, split df into X and y, then perform a train-test split with random_state=42 and stratify=y to create variables with the standard X_train, X_test, y_train, y_test names.
 
 ```
