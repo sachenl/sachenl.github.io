@@ -56,23 +56,23 @@ The data looks much better now with very few of outlier numbers.
 
 ## Now the data was ready and we need to prepare and modeling the data with varies models.
 
-### Plan
+###  Plan
 
-#### 1. Perform a Train-Test Split
+####  1. Perform a Train-Test Split
 
 For a complete end-to-end ML process, we need to create a holdout set that we will use at the very end to evaluate our final model's performance.
 
-#### 2. Build and Evaluate several Model including Logistic Regression, k-Nearest Neighbors, Decision Trees, Randdom forest, Support Vector Machine.
+####  2. Build and Evaluate several Model including Logistic Regression, k-Nearest Neighbors, Decision Trees, Randdom forest, Support Vector Machine.
 
-##### For each of the model, we need several steps
+#####   For each of the model, we need several steps
 
     1. Build and Evaluate a base model
     2. Build and Evaluate Additional Logistic Regression Models
     3. Choose and Evaluate a Final Model
     
-#### 3. Compare all the models and find the best model
+####  3. Compare all the models and find the best model
 
-### 1.  Prepare the Data for Modeling
+###  1.  Prepare the Data for Modeling
 
 The target is Cover_Type. In the cell below, split df into X and y, then perform a train-test split with random_state=42 and stratify=y to create variables with the standard X_train, X_test, y_train, y_test names.
 
