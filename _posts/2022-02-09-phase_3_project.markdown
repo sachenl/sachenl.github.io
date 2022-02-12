@@ -94,7 +94,7 @@ X_test_scaled = scale.transform(X_test)
 
 ### 2. Build and Evaluate several Model
 
-####  I. Build the model with Logistic Regression
+####  Build the model with Logistic Regression
 ```
 # Instantiate a LogisticRegression with random_state=42
 Log = LogisticRegression(random_state=42)
@@ -133,7 +133,7 @@ plt.show()
 
 The score for LogisticRegression is not very high. It is just above the random guessing. The false positive and false negtive rate are very high.
 
-####  II. Build the model with  k-Nearest Neighbors
+####  Build the model with  k-Nearest Neighbors
 
 ```
 # For k-Nearest Neighbors, I first build the base line model
@@ -202,7 +202,7 @@ plt.show()
 Compare to the baseline model, even though the training score decreased, the testing score increased. However, the confusion matrix showed there are a lot of false negtive. 
 
 
-#### III. Build the model with Decision Trees
+####  Build the model with Decision Trees
 
 ```
 # set the baseline model for DecisionTreeClassifier
@@ -260,7 +260,7 @@ Plot confusion matrix
 
 Compare to the DT baseline model, even though the training score decreased, the testing score increased. Now the two scores are close to each other and both of them are very high. The confusion matrix is also pretty resonable compare to other models.
 
-####  IV. Build the model with  Support Vector Machine
+#### Build the model with  Support Vector Machine
 
 ```
 # set the baseline model for Support Vector Machine
@@ -312,7 +312,7 @@ print (round(svm_baseline_best.score(X_test_scaled, y_test),5))
 Compare to the SVC baseline model, the training score decreased, the testing score is not changing. They are pretty high but still less than DT model. The False negtive rate for this model is also very high.
 
 
-####  V. Build the model with RandomForestClassifier
+####  Build the model with RandomForestClassifier
 
 ```
 rf_clf = RandomForestClassifier()
