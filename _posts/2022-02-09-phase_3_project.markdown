@@ -374,7 +374,7 @@ print (round(DT_baseline_final.score(X_test_scaled, y_test), 5))
 
 Replot the confusion matrix.
 
-![](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig5dt.png/)
+![fig.5](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig5dt.png)
 
 
 The final score for training and testing data are very high and close to each other which suggest there is no overfit or downfit to the trainning data. Now let find out the weight of each features to the target results.
