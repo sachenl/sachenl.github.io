@@ -96,7 +96,7 @@ X_train, y_train = smote.fit_resample(X_train_scaled, y_train)
 
 ### 2. Build and Evaluate several Model
 
-####  Build the model with Logistic Regression
+###  Build the model with Logistic Regression
 ```
 Log = LogisticRegression(random_state=42)
 a = Log.fit(X_train, y_train)
@@ -143,7 +143,7 @@ precision_score 0.372
 
 The confusion box shows massive TN data compared to the TP, FP, and FN. In this project, the main focus of our fitting is on TP, which is the customers who will churn the plan. In this case, the accuracy, including the TN data, is not work in our project. However, the f1 score, which combines both recall and precision data, looks well working for our fitting. The confusion box for Logistic Regression fitting shows there is too much FP, and the F1 score is not high enough. Thus the Logistic Regression is not working well for these data.
 
-####  Build the model with  k-Nearest Neighbors
+###  Build the model with  k-Nearest Neighbors
 
 ```
 knn_base = KNeighborsClassifier()
@@ -190,7 +190,7 @@ precision_score 0.41304
 For data fit to model with k-Nearest Neighbors, the f1 score is still low because there is a lot of FP data. 
 
 
-####  Build the model with Decision Trees
+###  Build the model with Decision Trees
 
 ```
 DT_baseline = DecisionTreeClassifier(random_state=42)
@@ -248,7 +248,7 @@ Plot confusion matrix
 Compare to the first to model, Decision Tree gives us better f1 score. However, it is still not high enough since FP and FN are still high compare to TP. 
 
 
-#### Build the model with  Support Vector Machine
+### Build the model with  Support Vector Machine
 
 ```
 svm_baseline = SVC()
@@ -355,8 +355,8 @@ Compare to other four models, the model of Random Forest gives us best results o
  
  ```
  
-The final score for training and testing data are very high and close to each other which suggest there is no overfit or downfit to the trainning data. Now let find out the weight of each features to the target results.
-# I make Random Forest model to the final one.
+The final score for training and testing data are very high and close to each other which suggest there is no overfit or downfit to the trainning data. Now let find out the weight of each features to the target results. 
+### I make Random Forest model to the final one.
 ```
 importance_DT = rf_clf_best.feature_importances_
 col = []
@@ -390,11 +390,17 @@ for i in range (16 , 11, -1):
 ![fig.5](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig8.png)
 
 ##### The top 5 important features:
-total day charge  0.21184308289677392
-customer service calls  0.16868781183541365
-total intl calls  0.08463497091973587
-international plan_yes 0.0781320767218108
-total eve minutes  0.06242784467555647
+
+total day charge  0.21184
+
+customer service calls  0.16868
+
+total intl calls  0.0846349709
+
+international plan_yes 0.07813
+
+total eve minutes  0.062427
+
  
  ### Check if there is special patten for the top five important features
  
@@ -458,7 +464,9 @@ There is no clear relationship between total eve minutes and churn or not.
 
  There is no clear relationship between total intl charge and churn or not.
  
+ 
  # Conclusion
+ 
 We polished our original data by removing the outlier and catalyzing the necessary columns. We then tested several models to fit out data and selected the best one, Random Forest. The final score of predicting is 0.83117, which is very high. By plotting the feature importance, we found that the top 5 weighted features are total day charge, customer service calls, international plan_yes, total intl calls, and eve minutes. We then plot the histogram of each feature separated by the customers who churn and not churn the plan. We found that customers who had day charge more than 40 or had customer service call four and more or had an international plan had a higher chance of churning the service. When investigating the features of total day charge and customer service calls, customers using Syriatel service more often have a higher chance of churning the service. Thus, Syriatel company can promote the service charge to attract people to use more of that. They also need to make the customer service friendlier and more professional to help customers address the problems. The international plan is also crucial for customers to churn the service. Based on this point, Syriatel can also make some memorable plans if more customers use the international program.
 
  
