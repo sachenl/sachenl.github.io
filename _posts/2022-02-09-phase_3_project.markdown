@@ -444,8 +444,11 @@ df_churn.plot(kind = 'bar', xlabel = 'international plan', ylabel = 'Normalized 
 plt.show()
  ```
  
-     not churn     churn
+ 
+            not churn     churn
+		 
  No   0.721198  0.278802
+ 
 Yes   0.933944  0.066056
 
 ![fig.11](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig11.png)
