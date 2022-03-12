@@ -15,15 +15,11 @@ For this project, I used several regression models to model the data from SyriaT
 
 ### Business Problem
 
-SyriaTel Customer Churn (Links to an external site.) Build a classifier to predict whether a customer will ("soon") stop doing business with SyriaTel, a telecommunications company. Note that this is a binary classification problem.
+Build a classifier to predict whether a customer will ("soon") stop doing business with SyriaTel, a telecommunications company. Note that this is a binary classification problem.
 
 Most naturally, your audience here would be the telecom business itself, interested in losing money on customers who don't stick around very long. Are there any predictable patterns here?
 
-1. polish the data which have no meaning or is null to the price.
-2. remove the features which do not contribute to the house price.
-3. check if there are some high correlated features in which some of them can be removed.
-4. build the linear regression model.
-5. check how the features can contribute to the house change.
+
 
 ## Plan
 Since the SyriaTel Customer Churn is a binary classification problem problem, I will try to use several different algorithms to fit the data and select one of the best one. The algorithms I will try include Logistic Regression, k-Nearest Neighbors, Decision Trees, Random Forest, Support Vector Machine. The target of the data we need to fit is the column 'churn'. The features of the data is the other columns in dataframe. However, when I load the data file into dataframe, i found some of the columns are linear correlated with each other. I need to drop one of them. We need to polish the data first.
@@ -92,60 +88,73 @@ X_train_scaled = scale.transform(X_train)
 X_test_scaled = scale.transform(X_test)
 ```
 
+As the data is inbalanced, I used smote to make the training data balanced before fitting.
+```
+smote = SMOTE()
+X_train, y_train = smote.fit_resample(X_train_scaled, y_train) 
+```
+
 ### 2. Build and Evaluate several Model
 
 ####  Build the model with Logistic Regression
 ```
-# Instantiate a LogisticRegression with random_state=42
 Log = LogisticRegression(random_state=42)
 a = Log.fit(X_train, y_train)
-print (Log.score(X_train_scaled, y_train))
-print (Log.score(X_test_scaled, y_test))
-```
-0.62997
 
-0.64267
+```
+
 
 I then plot the confusion matrix for this model
 
 ```
-y_hat_test = Log.predict(X_test_scaled)
+def plot_confusion(model, X_test_scaled, y_test):   
+    y_hat_test = model.predict(X_test_scaled)
+    
+    print('accuracy_score is ', round(accuracy_score( y_test, y_hat_test), 5))
+    print('f1_score is ', round(f1_score( y_test, y_hat_test), 5))
+    print('recall_score', round(recall_score( y_test, y_hat_test), 5))
+    print('precision_score', round(precision_score( y_test, y_hat_test), 5))
 
 
+    cf_matrix  = confusion_matrix(y_test,y_hat_test)
 
-cf_matrix  = confusion_matrix(y_test,y_hat_test)
+    # make the plot of cufusion matrix 
+    ax = sns.heatmap(cf_matrix, annot=True, cmap='Blues')
 
-# make the plot of cufusion matrix 
-ax = sns.heatmap(cf_matrix, annot=True, cmap='Blues')
+    ax.set_title('Seaborn Confusion Matrix with labels\n\n');
+    ax.set_xlabel('\nPredicted Values')
+    ax.set_ylabel('Actual Values ');
 
-ax.set_title('Seaborn Confusion Matrix with labels\n\n');
-ax.set_xlabel('\nPredicted Values')
-ax.set_ylabel('Actual Values ');
+    ## Ticket labels - List must be in alphabetical order
+    ax.xaxis.set_ticklabels(['False','True'])
+    ax.yaxis.set_ticklabels(['False','True'])
 
-## Ticket labels - List must be in alphabetical order
-ax.xaxis.set_ticklabels(['False','True'])
-ax.yaxis.set_ticklabels(['False','True'])
-
-## Display the visualization of the Confusion Matrix.
-plt.show()
+    ## Display the visualization of the Confusion Matrix.
+    plt.show()
+    
+plot_confusion(Log, X_test_scaled, y_test)  
 ```
-![fig.3](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig3.png)
+accuracy_score is  0.76832  
+f1_score is  0.5124  
+recall_score 0.82301  
+precision_score 0.372  
 
-The score for LogisticRegression is not very high. It is just above the random guessing. The false positive and false negtive rate are very high.
+![fig.3](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig3_logistic.png)
+
+The confusion box shows massive TN data compared to the TP, FP, and FN. In this project, the main focus of our fitting is on TP, which is the customers who will churn the plan. In this case, the accuracy, including the TN data, is not work in our project. However, the f1 score, which combines both recall and precision data, looks well working for our fitting. The confusion box for Logistic Regression fitting shows there is too much FP, and the F1 score is not high enough. Thus the Logistic Regression is not working well for these data.
 
 ####  Build the model with  k-Nearest Neighbors
 
 ```
-# For k-Nearest Neighbors, I first build the base line model
 knn_base = KNeighborsClassifier()
-knn_base.fit(X_train_scaled, y_train)
-print (round(knn_base.score(X_train_scaled, y_train),5))
-print (round(knn_base.score(X_test_scaled, y_test),5))
+knn_base.fit(X_train, y_train)
+plot_confusion(knn_base, X_test_scaled, y_test)  
 
 ```
-0.90782
-
-0.88874
+accuracy_score is  0.79058 
+f1_score is  0.49367 
+recall_score 0.69027 
+precision_score 0.38424 
 
 The scores for KNeighborsClassifier are pretty high. But the score for traing is higher than testing data. We will try to use other parameter to find the best number of neighbor used for fitting.
 
@@ -155,69 +164,48 @@ knn_param_grid = {
     'n_neighbors' : [1,3,5,6,7,8,9, 10]
 }
 knn_param_grid =  GridSearchCV(knn_base, knn_param_grid, cv=3, return_train_score=True)
-knn_param_grid.fit(X_train_scaled, y_train)
+#fit the model to data
+knn_param_grid.fit(X_train, y_train)
 # find the best parameter
-
 knn_param_grid.best_estimator_
 ```
-KNeighborsClassifier(n_neighbors=7)
+
+KNeighborsClassifier(n_neighbors=1)
 
 ```
-# fit the data with best estimator
-knn_base_best = KNeighborsClassifier(n_neighbors=7)
-knn_base_best.fit(X_train_scaled, y_train)
-print (round(knn_base_best.score(X_train_scaled, y_train),5))
-print (round(knn_base_best.score(X_test_scaled, y_test),5))
+knn_base_best = KNeighborsClassifier(n_neighbors=1)
+knn_base_best.fit(X_train, y_train)
+
+plot_confusion(knn_base_best, X_test_scaled, y_test) 
 
 ```
-0.90083
-
-0.88351
-
-Plot the confusion matrix
-```
-y_hat_test = knn_base_best.predict(X_test_scaled)
+accuracy_score is  0.82068
+f1_score is  0.45418
+recall_score 0.50442
+precision_score 0.41304
 
 
+![fig.4](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig4knnbest.png)
 
-cf_matrix  = confusion_matrix(y_test,y_hat_test)
-
-# make the plot of cufusion matrix 
-ax = sns.heatmap(cf_matrix, annot=True, cmap='Blues')
-
-ax.set_title('Seaborn Confusion Matrix with labels\n\n');
-ax.set_xlabel('\nPredicted Values')
-ax.set_ylabel('Actual Values ');
-
-## Ticket labels - List must be in alphabetical order
-ax.xaxis.set_ticklabels(['False','True'])
-ax.yaxis.set_ticklabels(['False','True'])
-
-## Display the visualization of the Confusion Matrix.
-plt.show()
-```
-
-![fig.4](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig4knn.png)
-
-Compare to the baseline model, even though the training score decreased, the testing score increased. However, the confusion matrix showed there are a lot of false negtive. 
+For data fit to model with k-Nearest Neighbors, the f1 score is still low because there is a lot of FP data. 
 
 
 ####  Build the model with Decision Trees
 
 ```
-# set the baseline model for DecisionTreeClassifier
 DT_baseline = DecisionTreeClassifier(random_state=42)
-DT_baseline.fit(X_train_scaled, y_train)
-print (DT_baseline.score(X_train_scaled, y_train))
-print (DT_baseline.score(X_test_scaled, y_test))
+DT_baseline.fit(X_train, y_train)
+
+plot_confusion(DT_baseline, X_test_scaled, y_test)  
 
 ```
 
-1.0
+accuracy_score is  0.87696
+f1_score is  0.624
+recall_score 0.69027
+precision_score 0.56934
 
-0.90314
-
-The scores for DecisionTreeClassifier are very high even 100% for trainning data. However, the score for testing is only 90% which suggest the DT_baseline is overfitting.
+The f1 score for DT is not high also.
 
 ```
 #set the list of parameters we will try
@@ -236,43 +224,44 @@ dt_grid_search.fit(X_train, y_train)
 dt_grid_search.best_params_
 ```
 
-{'criterion': 'gini',
+{'criterion': 'entropy',
  'max_depth': 10,
- 'min_samples_leaf': 6,
+ 'min_samples_leaf': 1,
  'min_samples_split': 2}
  
 ```
- # refit the model to data with best parameters
 DT_baseline_best = DecisionTreeClassifier(random_state=42, criterion='entropy', max_depth=10,
-                                          min_samples_leaf=6, min_samples_split=2)
-DT_baseline_best.fit(X_train_scaled, y_train)
-print (round(DT_baseline_best.score(X_train_scaled, y_train),5))
-print (round(DT_baseline_best.score(X_test_scaled, y_test),5))
+                                          min_samples_leaf=1, min_samples_split=2)
+DT_baseline_best.fit(X_train, y_train)
+plot_confusion(DT_baseline_best, X_test_scaled, y_test)  
 ```
 
-0.96461
-
-0.95026
+accuracy_score is  0.9123 
+f1_score is  0.70996 
+recall_score 0.72566 
+precision_score 0.69492 
 
 Plot confusion matrix
 
-![fig.5](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig5dt.png)
+![fig.5](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig5dtbest.png)
 
-Compare to the DT baseline model, even though the training score decreased, the testing score increased. Now the two scores are close to each other and both of them are very high. The confusion matrix is also pretty resonable compare to other models.
+Compare to the first to model, Decision Tree gives us better f1 score. However, it is still not high enough since FP and FN are still high compare to TP. 
+
 
 #### Build the model with  Support Vector Machine
 
 ```
-# set the baseline model for Support Vector Machine
 svm_baseline = SVC()
-svm_baseline.fit(X_train_scaled, y_train)
-print (round(svm_baseline.score(X_train_scaled, y_train),5))
-print (round(svm_baseline.score(X_test_scaled, y_test),5))
+svm_baseline.fit(X_train, y_train)
+
+
+plot_confusion(svm_baseline, X_test_scaled, y_test)  
 
 ```
-0.93578
-
-0.90707
+accuracy_score is  0.87696
+f1_score is  0.63281
+recall_score 0.71681
+precision_score 0.56643
 
 ```
 #set the list of parameters we will try
@@ -291,23 +280,25 @@ svm_grid_search.fit( X_train_scaled, y_train)
 svm_grid_search.best_params_
 
 ```
-{'C': 5, 'gamma': 'auto', 'kernel': 'rbf'}
+{'C': 10, 'gamma': 0.1, 'kernel': 'rbf'}
 
 ```
 # refit the model to data with best parameters
 
-svm_baseline_best = SVC(C= 1, gamma= 'auto', kernel= 'rbf')
-svm_baseline_best.fit(X_train_scaled, y_train)
-print (round(svm_baseline_best.score(X_train_scaled, y_train),5))
-print (round(svm_baseline_best.score(X_test_scaled, y_test),5))
+svm_baseline_best = SVC(C= 10, gamma= 0.1, kernel= 'rbf')
+svm_baseline_best.fit(X_train, y_train)
 
-0.93578
+plot_confusion(svm_baseline_best, X_test_scaled, y_test)  
+```
 
-0.90707
+accuracy_score is  0.86911
+f1_score is  0.53271
+recall_score 0.50442
+precision_score 0.5643
 
 ```
 
-![fig.6](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig6svc.png)
+![fig.6](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig6svcbest.png)
 
 Compare to the SVC baseline model, the training score decreased, the testing score is not changing. They are pretty high but still less than DT model. The False negtive rate for this model is also very high.
 
@@ -316,13 +307,15 @@ Compare to the SVC baseline model, the training score decreased, the testing sco
 
 ```
 rf_clf = RandomForestClassifier()
-rf_clf.fit(X_train_scaled, y_train)
-print (round(rf_clf.score(X_train_scaled, y_train),5))
-print (round(rf_clf.score(X_test_scaled, y_test),5))
-```
-1.0
+rf_clf.fit(X_train, y_train)
 
-0.94895
+plot_confusion(rf_clf, X_test_scaled, y_test)  
+```
+
+accuracy_score is  0.94241 
+f1_score is  0.80531 
+recall_score 0.80531 
+precision_score 0.80531 
 
 ```
 rf_param_grid = {
@@ -340,99 +333,74 @@ print("")
 print(f"Optimal Parameters: {rf_grid_search.best_params_}")
 ```
 
-Optimal Parameters: {'criterion': 'gini', 'max_depth': None, 'min_samples_leaf': 3, 'min_samples_split': 10, 'n_estimators': 30}
+Optimal Parameters: {'criterion': 'entropy', 'max_depth': None, 'min_samples_leaf': 3, 'min_samples_split': 5, 'n_estimators': 100}
 
 ```
-rf_clf_best = RandomForestClassifier(criterion='gini', max_depth=10, min_samples_leaf=3, min_samples_split=10, n_estimators = 30)
-rf_clf_best.fit(X_train_scaled, y_train)
-print (round(rf_clf_best.score(X_train_scaled, y_train),5))
+rf_clf_best = RandomForestClassifier(criterion='entropy', max_depth=None, min_samples_leaf=3, min_samples_split=5, n_estimators = 100)
+rf_clf_best.fit(X_train, y_train)
 
-
-print (round(rf_clf_best.score(X_test_scaled, y_test),5))
+plot_confusion(rf_clf_best, X_test_scaled, y_test)  
 ```
 
-0.96461
+accuracy_score is  0.94895 
+f1_score is  0.83117 
+recall_score 0.84956 
+precision_score 0.81356 
 
-0.92539
+![fig.7](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig7rdfbest.png)
 
-![fig.7](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig7rdf.png)
-
+Compare to other four models, the model of Random Forest gives us best results on the f1 scores. The TP in confusion matrix incresed and the FP, FN decresed. Thus we selected random Forest for our final model.
 
  #### Compare all the models and find the best model, then evaluate it.
  
  ```
- # When comparing the final score for training and testing data, the decision tree model give us best results. 
-# I make this model to the final one.
-DT_baseline_final = DecisionTreeClassifier(random_state=42, criterion='entropy', max_depth=10,
-                                          min_samples_leaf=6, min_samples_split=2)
-DT_baseline_final.fit(X_train_scaled, y_train)
-print (round(DT_baseline_final.score(X_train_scaled, y_train), 5))
-print (round(DT_baseline_final.score(X_test_scaled, y_test), 5))
- ```
- 0.96461
  
-0.95026
-
-Replot the confusion matrix.
-
-![fig.5](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig5dt.png)
-
-
 The final score for training and testing data are very high and close to each other which suggest there is no overfit or downfit to the trainning data. Now let find out the weight of each features to the target results.
-
+# I make Random Forest model to the final one.
 ```
-importance_DT = DT_baseline_best.feature_importances_
+importance_DT = rf_clf_best.feature_importances_
+col = []
+val = []
+combine = []
 # summarize feature importance
-for i,v in zip(X_train.columns, importance_DT):
-    print('Feature: {0} ,    Score: {1:0.5f}'.format (i,v))
+for i,v in zip(X.columns, importance_DT):
+    
+    combine.append((i, v))
 # plot feature importance
 plt.figure(figsize = (15, 5))
-plt.barh(X_train.columns, importance_DT,  align='center')
+
+sort_features =sorted(combine, key = lambda x:x[1])
+
+col = [feat[0] for feat in sort_features]
+val = [feat[1] for feat in sort_features]
+
+
+
+plt.barh(col, val,  align='center')
 plt.xlabel('Feature importance')
+plt.ylabel('The features')
+
 
 plt.show()
+for i in range (16 , 11, -1):
+    
+    print(col[i], val[i])
 ```
-Feature: account length ,    Score: 0.01396
-Feature: area code ,    Score: 0.00536
-Feature: number vmail messages ,    Score: 0.00381
-Feature: total day calls ,    Score: 0.01465
-Feature: total day charge ,    Score: 0.26170
-Feature: total eve minutes ,    Score: 0.05911
-Feature: total eve calls ,    Score: 0.02410
-Feature: total eve charge ,    Score: 0.08361
-Feature: total night calls ,    Score: 0.00912
-Feature: total night charge ,    Score: 0.05405
-Feature: total intl calls ,    Score: 0.08132
-Feature: total intl charge ,    Score: 0.08538
-Feature: customer service calls ,    Score: 0.14691
-Feature: international plan_yes ,    Score: 0.10091
-Feature: voice mail plan_yes ,    Score: 0.05603
 
-![fig.8](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig8.png)
+![fig.5](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig8.png)
 
-Find the top 5 important features.
-```
-top_5 =np.sort(DT_baseline_final.feature_importances_
-       )[: :-1][0:5]
-top_5_features = []
-for sor in top_5:    
-    for idx, num in zip(X.columns, importance_DT):
-        #print(idx, num)
-        if num == sor:
-            top_5_features.append((idx, num))
-            pass
-top_5_features
-```
-('total day charge', 0.26169763518771966),
- ('customer service calls', 0.1469102061483546),
- ('international plan_yes', 0.1009100150705904),
- ('total intl charge', 0.08537600988682308),
- ('total eve charge', 0.08360637737007212)
+##### The top 5 important features:
+total day charge  0.21184308289677392
+customer service calls  0.16868781183541365
+total intl calls  0.08463497091973587
+international plan_yes 0.0781320767218108
+total eve minutes  0.06242784467555647
  
  ### Check if there is special patten for the top five important features
  
 ```
 # Plot the histogram for total day charge of customers who churned and not churned.
+
 plt.figure(figsize=(15,6))
 plt.subplot(1,2,1)
 plt.hist(df_polished_4[df_polished_4['churn'] == 1]['total day charge'], density=True)
@@ -461,44 +429,37 @@ plt.show()
  
  ```
  
- # Since the column 'international plan_yes' contains only 0 and 1. I plot the value counts for bot churned and not churned.
-print('not churned ', ' \n' ,df_polished_4[df_polished_4['churn'] == 0]['international plan_yes'].value_counts())
-print ('churned', '\n', df_polished_4[df_polished_4['churn'] == 1]['international plan_yes'].value_counts())
+churn = df_polished_4[df_polished_4['churn'] == 1]['international plan_yes'].value_counts(normalize=True)
+not_churn = df_polished_4[df_polished_4['churn'] == 0]['international plan_yes'].value_counts(normalize=True)
+df_churn = pd.DataFrame([ churn, not_churn ], index =[' No', 'Yes'])
+df_churn.columns = ['not churn', 'churn']
+print(df_churn)
+df_churn.plot(kind = 'bar', xlabel = 'international plan', ylabel = 'Normalized amount')
+plt.show()
  ```
  
- not churned   
- 
- 0    2446
- 
-1     173
+     not churn     churn
+ No   0.721198  0.278802
+Yes   0.933944  0.066056
 
-Name: international plan_yes, dtype: int64
+![fig.11](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig11.png)
 
-churned 
-
- 0    313
- 
-1    121
-
-Name: international plan_yes, dtype: int64
-
-This data show that the customer who had international plan have much higher chance to churn the plan. .
+This data show that the customers who have international plan have 27% chance to churn the service. But the customers who do not have the international plan have only 6.7% chance to churn the service.
 
  Plot the histogram for 'total eve minutes' of customers who churned and not churned.
 
-![fig.11](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig11.png)
+![fig.12](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig12.png)
 
 There is no clear relationship between total eve minutes and churn or not.
 
  Plot the histogram for 'total intl charge' of customers who churned and not churned.
 
-![fig.12](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig12.png)
+![fig.13](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig13.png)
 
  There is no clear relationship between total intl charge and churn or not.
  
  # Conclusion
-
-We polished our orignal data by removing the outlier and catlize the necessary columns. We then tested several of models to fit out data and selected the best one which is desicion tree. The final score of predicting is 0.94 which is very high. By dig out the relation ship between the top 5 weighted features and target column (churn), we found that people who had day charge more than 40 or had customer service calls 4 and more, or had international plan had higher chance to churn the plan. So the company might focus on these customers and make some special promotions on these plan to attract more customer on them. 
+We polished our original data by removing the outlier and catalyzing the necessary columns. We then tested several models to fit out data and selected the best one, Random Forest. The final score of predicting is 0.83117, which is very high. By plotting the feature importance, we found that the top 5 weighted features are total day charge, customer service calls, international plan_yes, total intl calls, and eve minutes. We then plot the histogram of each feature separated by the customers who churn and not churn the plan. We found that customers who had day charge more than 40 or had customer service call four and more or had an international plan had a higher chance of churning the service. When investigating the features of total day charge and customer service calls, customers using Syriatel service more often have a higher chance of churning the service. Thus, Syriatel company can promote the service charge to attract people to use more of that. They also need to make the customer service friendlier and more professional to help customers address the problems. The international plan is also crucial for customers to churn the service. Based on this point, Syriatel can also make some memorable plans if more customers use the international program.
 
  
 
