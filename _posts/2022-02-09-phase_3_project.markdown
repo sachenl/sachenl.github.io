@@ -296,7 +296,7 @@ f1_score is  0.53271
 recall_score 0.50442
 precision_score 0.5643
 
-```
+
 
 ![fig.6](https://raw.githubusercontent.com/sachenl/dsc-phase-3-project/main/images/fig6svcbest.png)
 
@@ -353,7 +353,7 @@ Compare to other four models, the model of Random Forest gives us best results o
 
  #### Compare all the models and find the best model, then evaluate it.
  
- ```
+ 
  
 The final score for training and testing data are very high and close to each other which suggest there is no overfit or downfit to the trainning data. Now let find out the weight of each features to the target results. 
 ### I make Random Forest model to the final one.
