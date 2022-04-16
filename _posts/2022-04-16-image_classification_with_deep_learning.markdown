@@ -1,11 +1,12 @@
 ---
 layout: post
-title:      "Project 4 Image Classification with Deep Learning"
+title:      "Project 4 final"
 date:       2022-04-16 01:05:36 -0400
 permalink:  image_classification_with_deep_learning
 ---
 
-
+## Overview
+For this project, we trained a pretrained cnn model to predict the Classification of the x-ray images.
 
 ## Business understanding
 The medical dataset comes from Kermany et al. contains a set of x-ray images of pediatric patients. The images will show whether the patients have pneumonia or not. our task is to build a model that can classify whether a given patient has pneumonia, given a chest x-ray image. Since this is an Image Classification problem, we are going to solve it with Deep Learning.
