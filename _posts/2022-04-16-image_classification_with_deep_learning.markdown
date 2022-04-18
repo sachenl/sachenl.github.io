@@ -182,6 +182,7 @@ plt.show()
 ![fig 2 samples](https://raw.githubusercontent.com/sachenl/dsc-phase-4-project/main/image/fig%202%20sample%20images.png)
 
 
+We plot some of the images in the training dataset. However, I can not tell which one is a case of pneumonia and which one is a normal case just by looking at the pictures. Now we are going to train the computer with a pretrainned cnn model to predict whether the picture belong to pneumonia or normal case.
 
 ##  3. Build the model base on pretrain network VGG19.
 
