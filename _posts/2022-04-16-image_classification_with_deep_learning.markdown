@@ -50,9 +50,10 @@ IIn the train folder, there is a regular folder that contains 1349 images and th
 
 1. Downsampleing the data set by randomly choosing 20% of the initial training and testing images to the new data_org_subset folder. Make a new validation folder and randomly select 5% of the pictures from the training folder.
 2. Define the trained generator, validation generator, and test generator.
-3. Build the deep learning model base on the Pretrained CNN (VGG19) by adding a few fully connected layers. Then, train the model with selected images.
-4. Retrain the model with complete training data. 
-5. Evaluate the model with the test images.
+3. Build a baseline model.
+4. Build the deep learning model base on the Pretrained CNN (VGG19) by adding a few fully connected layers. Then, train the model with selected images.
+5. Retrain the model with complete training data. 
+6. Evaluate the model with the test images.
 
 
 ### 1. Rebuild the data subset folder with 20% of the original images
@@ -185,7 +186,70 @@ plt.show()
 
 We plot some of the images in the training dataset. However, I can not tell which one is a case of pneumonia and which one is a normal case just by looking at the pictures. So now we will train the computer with a Pretrainned CNN model to predict whether the picture belongs to pneumonia or normal case.
 
-##  3. Build the model base on pretrain network VGG19.
+## 3. Build a baseline model
+
+```
+model = models.Sequential()
+model.add(layers.Conv2D(32, (3, 3), activation='relu',
+                        input_shape=(300, 300, 3)))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(128, activation='relu'))
+model.add(layers.Dense(256, activation='relu'))
+model.add(layers.Dense(512, activation='relu'))
+model.add(layers.Dense(2, activation='softmax'))
+
+
+model.compile(loss='categorical_crossentropy',
+              optimizer=optimizers.RMSprop(lr=1e-4),
+              metrics=['acc'])
+model.summary()
+```
+
+
+![sequencial](https://raw.githubusercontent.com/sachenl/dsc-phase-4-project/main/image/sequencial.png)
+
+```
+history = model.fit(train_generator,
+                              steps_per_epoch=15,
+                              epochs=10,
+                              validation_data=val_generator,
+                              validation_steps=8)
+```
+![result](https://raw.githubusercontent.com/sachenl/dsc-phase-4-project/main/image/own-results.png)
+
+
+```
+# Plot the accuracy and loss for train and validation. 
+def plot_acc(history):
+    train_acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    train_loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    epch = range(1, len(train_acc) + 1)
+    plt.plot(epch, train_acc, 'g.', label='Training Accuracy')
+    plt.plot(epch, val_acc, 'g', label='Validation acc')
+    plt.title('Accuracy')
+    plt.legend()
+    plt.figure()
+    plt.plot(epch, train_loss, 'r.', label='Training loss')
+    plt.plot(epch, val_loss, 'r', label='Validation loss')
+    plt.title('Loss')
+    plt.legend()
+    plt.show()
+plot_acc(history)
+```
+
+![](https://raw.githubusercontent.com/sachenl/dsc-phase-4-project/main/image/own-acc.png)
+
+##  4. Build the model base on pretrain network VGG19.
 
 ```
 
@@ -264,7 +328,7 @@ model.save('results_on_partial_dataset.h5')
 
 
 
-## 4. Retrain the model with full  dataset.
+## 5. Retrain the model with full  dataset.
 
 Now is the time to use our model for the full dataset. We  remade the folder of train, val, test folder for full dataset. 
 Transfer 90% of train images to new train and 10% of train images to new validation folder. 
@@ -343,7 +407,7 @@ plot_acc(history)
 
 In this fitting, both training accuracy and validation accuracy are very high. Even though the fluctuation of validation accuracy is bigger than training accuracy, both accuracies generally had the same trend.
 
-## 5. Evaluate the model with the test images.
+## 6. Evaluate the model with the test images.
 We first generate the test labels as the real class of the images.
 ```
 # Get all the data in the directory split/test (180 images), and reshape them
