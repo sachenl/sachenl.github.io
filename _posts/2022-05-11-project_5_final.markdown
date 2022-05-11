@@ -230,7 +230,9 @@ X_train.shape, X_val.shape, X_test.shape
 ((7210, 9), (802, 9), (2003, 9))
 
 
+
 **7. Creat and transfer the images to the corresponding folders **
+
 We created the subfolders containing the train, Val, and test folder. In addition, we created a folder for all types of skin cancers in each of the folders. Finally, We transferred the images to the corresponding folder based on the data frame and the path in each image ID.
 
 ```
