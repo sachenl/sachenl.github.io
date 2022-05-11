@@ -216,8 +216,8 @@ if __name__ == '__main__':
 
 In general, most cancers happen between 35 to 70.  Age 45 is a high peak for patients to get a skin cancer.  Some types of skin cancer (vasc, nv) happen to those below 20, and others occur most after 30.
 
+## **6. Train Test Split based on the data frame**
 
-## **6. Train Test Split based on the data frame **
 We split the dataset to training (70%), validation (10%) and testing (20%) by train_test_split.
 
 ```
