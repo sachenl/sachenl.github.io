@@ -1,7 +1,7 @@
 ---
 layout: post
-title:      "Project 5 final"
-date:       2022-05-11 17:39:43 +0000
+title:      "**Project 5 final**"
+date:       2022-05-11 13:39:43 -0400
 permalink:  project_5_final
 ---
 
@@ -9,10 +9,10 @@ Student name: Zhiqiang Sun
 
 Student pace: self paced
 
-## Business understanding
+## **Business understanding**
 The skin cancer dataset contains many medical images that show various kinds of skin cancer. In this project, we will analyze and visualize the relationship between cancer and age and the location of the body. Furthermore, we will use machine learning to train a model that can distinguish the cancer type by given images. 
 
-## Dataset
+## **Dataset**
 The whole dataset were download from kaggle (https://www.kaggle.com/code/rakshitacharya/skin-cancer-data/data). The folder contains several csv files and two images folder. All the name of images were named with image id which can be found in the metadata excel file. There are several other hinist csv file which include the pixels information of corresponding images in different resolusion. In this project, we will focus on the information from the metadata. Also, when we creat the model, we will use the original images for higher resolusion, thus we will dismiss all the hmnist data this time. 
 
 The data has seven different classes of skin cancer which are listed below :
@@ -44,7 +44,7 @@ Here is the plan of the project step by step:
 13. Visualize some random images with prediction
 
 
-## 1. Import all the necessary libraries for this project
+## **1. Import all the necessary libraries for this project**
 ```
 # import the necessary libraries for this project
 import pandas as pd
@@ -76,7 +76,7 @@ server = app.server
 
 ```
 
-## 2. Make a dictionary of images and labels
+## **2. Make a dictionary of images and labels**
 In this steps, I make the path for all the images and a dictionary for all types of skin cancers with full names.
 
 ```
@@ -92,7 +92,7 @@ lesion_type_dict = {
 }
 
 ```
-## 3. Reading and processing the metadata
+## **3. Reading and processing the metadata**
 In this step, we have read the csv which had the information for all the patients and images. Afterthat, we made three more columns including the cancer type in full name, the label in skin cancers in digital and the path of image_id in the folder.
 
 ```
@@ -108,7 +108,7 @@ meta.head()
 
 ![fig1_meta](https://raw.githubusercontent.com/sachenl/project5/main/images/fig1_meta.png)
 
-## 4. Process data cleaning
+## **4. Process data cleaning**
 In this part, we check the missing values for each column and fill them. 
 
 ```
@@ -123,7 +123,7 @@ meta.isna().sum()
 ```
 ![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig3.png)
 
-## 5. Exploring the data analysis
+## **5. Exploring the data analysis**
 In this part, we briefly explored different features of the dataset, their distributions and counts.
 
 As there is some duplecate lesion_id which belong to same patient, all the features except the image_id for them are same with each other.  Thus, we first find and remove the duplex. 
@@ -217,7 +217,7 @@ if __name__ == '__main__':
 In general, most cancers happen between 35 to 70.  Age 45 is a high peak for patients to get a skin cancer.  Some types of skin cancer (vasc, nv) happen to those below 20, and others occur most after 30.
 
 
-## 6. Train Test Split based on the data frame 
+## **6. Train Test Split based on the data frame **
 We split the dataset to training (70%), validation (10%) and testing (20%) by train_test_split.
 
 ```
@@ -230,7 +230,7 @@ X_train.shape, X_val.shape, X_test.shape
 ((7210, 9), (802, 9), (2003, 9))
 
 
-## 7. Creat and transfer the images to the corresponding folders 
+## **7. Creat and transfer the images to the corresponding folders **
 We created the subfolders containing the train, Val, and test folder. In addition, we created a folder for all types of skin cancers in each of the folders. Finally, We transferred the images to the corresponding folder based on the data frame and the path in each image ID.
 
 ```
@@ -265,7 +265,8 @@ for first in TVT:
 
 ![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig6.png)
 
-## 8. Do image augmentation and generate extra images to the imbalanced skin types
+## **8. Do image augmentation and generate extra images to the imbalanced skin types**
+
 The amounts of files in each training folder type tell us the images of nv are much higher than others. The imbalance of the training dataset might cause a high bias in model fitting. Thus we will generate some more images for other kinds of cancers. Here we use image augmentation to oversample the samples in all classes except nv. Here is a simple chart about the oversampling.
 
 ![](https://raw.githubusercontent.com/sachenl/project5/main/images/oversampling.png)
@@ -323,7 +324,7 @@ for cat in class_list:
     shutil.rmtree(temp_dir)
 ```
 
-![](https://github.com/sachenl/project5/blob/main/images/fig7.png)
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig7.png)
 
 ```
 # check the files in each of the folders after image augmentation
@@ -333,23 +334,247 @@ for cat in class_list:
     print(len(os.listdir('sub_folders/train/'+cat)))
 ```
 
-![](https://github.com/sachenl/project5/blob/main/images/fig8.png)
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig8.png)
+
+The numers of files in each folders are in same levels.
+
+
+## **9. Do data generator for training, validation, and test folders**
+```
+new_dir = 'sub_folders2/'
+train_dir = '{}train'.format(new_dir)
+validation_dir = '{}val/'.format(new_dir)
+test_dir = '{}test/'.format(new_dir)
+
+batch_size = 50
+image_size = 224
+
+data_datagen = ImageDataGenerator(rescale=1./255,
+                                   rotation_range=180 ,# randomly rotate images in the range (degrees, 0 to 40)
+                                   width_shift_range=0.2,# randomly shift images horizontally (fraction of total width)
+                                   height_shift_range=0.2,# randomly shift images vertically (fraction of total height)
+                                   shear_range=0.2,
+                                   zoom_range=0.2, # Randomly zoom image 
+                                   horizontal_flip=True, # randomly flip images
+                                   vertical_flip=True, # randomly flip images
+                                   fill_mode='nearest')
+
+
+train_generator = ImageDataGenerator(rescale=1./255).flow_from_directory(train_dir, 
+                                                    target_size=(image_size, image_size), 
+                                                    batch_size= batch_size,
+                                                    class_mode='categorical') 
+
+
+val_generator = ImageDataGenerator(rescale=1./255).flow_from_directory(validation_dir, 
+                                                target_size=(image_size, image_size), 
+                                                batch_size=batch_size,
+                                                class_mode='categorical')
+
+test_generator = ImageDataGenerator(rescale=1./255).flow_from_directory(test_dir, 
+                                                target_size=(image_size, image_size), 
+                                                batch_size=1,
+                                                class_mode='categorical',
+                                                shuffle=False)
 
 
 
+```
+
+Found 31825 images belonging to 7 classes.
+
+Found 802 images belonging to 7 classes.
+
+Found 2003 images belonging to 7 classes.
 
 
+## ** 10. Build the CNN model**
+
+WE build a CNN model base on the pretrained model 'xception'.
+
+```
+cnn_base_xception = xception.Xception(weights='imagenet', 
+                 include_top=False, 
+                 input_shape=(224, 224, 3))
+
+# Define Model Architecture
+model = models.Sequential()
+model.add(cnn_base_xception)
+model.add(layers.Flatten())
+
+model.add(layers.Dense(128, activation='relu'))
+model.add(Dropout(0.2))  # dropout 25% of the nodes to prevent overfitting
+model.add(layers.Dense(7, activation='softmax'))
+
+cnn_base_xception.trainable = False
+
+model.summary()
+```
+
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig9.png)
+
+## **11. Fitting the model**
+We fit the training data to the model we created earlier
+
+```
+# find out the numbers of trainning and validation
+num_train = len(train_generator.labels)
+num_val = len(val_generator.labels)
+train_steps = np.ceil(num_train/batch_size)
+val_steps = np.ceil(num_val/batch_size)
+```
+
+```
+# compile and fit the model with training dataset
+model.compile(loss='categorical_crossentropy',
+               # set the optimizer
+              optimizer=optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False),
+              metrics=['acc'])
+
+history = model.fit(train_generator,
+                              steps_per_epoch=train_steps,
+                              epochs=20,
+                              validation_data=val_generator,
+                              validation_steps=val_steps)
+```
+
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig10.png)
+
+```
+# Plot the accuracy and loss for train and validation. 
+def plot_acc(history):
+    train_acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    train_loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    epch = range(1, len(train_acc) + 1)
+    plt.plot(epch, train_acc, 'g.', label='Training Accuracy')
+    plt.plot(epch, val_acc, 'g', label='Validation acc')
+    plt.title('Accuracy')
+    plt.legend()
+    plt.figure()
+    plt.plot(epch, train_loss, 'r.', label='Training loss')
+    plt.plot(epch, val_loss, 'r', label='Validation loss')
+    plt.title('Loss')
+    plt.legend()
+    plt.show()
+plot_acc(history)
+```
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig11.png)
+
+```
+#save the model
+model.save('results_on_xception_final_2.h5')
+```
+## **12. Model Evaluation**
+In this step we will check the testing accuracy and validation accuracy of our model,plot confusion matrix and also check the missclassified images count of each type.
 
 
+```
+# evaluate the model with test dataset.
+test_loss, test_acc = model.evaluate(test_generator, steps=2003)
+```
+
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig12.png)
 
 
+The accuracy of the model is 74.84% which is not bad at all.
 
 
+```
+# generate the prediction and true value of y
+Y_pred = model.predict(test_generator)
+Y_pred_classes = np.argmax(Y_pred,axis = 1) 
+Y_true = test_generator.labels
+```
+```
+# make teh confusion matrix
+confusion_mtx = confusion_matrix(Y_true, Y_pred_classes)
+confusion_mtx
+```
 
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig13.png)
 
+```
+indices = test_generator.class_indices
+```
+```
+# plot the confusion matrix
+plt.figure(figsize=(15,8))
+def plot_confusion_matrix(mtx, indices, normalize = False, title = 'confusion matrix', cmap = plt.cm.Reds):
+    plt.imshow(mtx, interpolation='nearest', cmap = cmap)
+    plt.title = title
+    plt.colorbar()
+    tick_mark = np.arange(len(indices))
+    plt.xticks (tick_mark, indices.keys(),  fontsize = 13)
+    plt.yticks (tick_mark, indices.keys(), fontsize = 13)
+    
+    if normalize:
+        mtx = mtx/mtx.sum(axis = 1)[:,np.newaxis]
+    
+    
+    for i in range(mtx.shape[0]):
+        for j in range(mtx.shape[1]):
+            plt.text(j,i,mtx[i][j], horizontalalignment = 'center', fontsize = 15)
+    plt.tight_layout()
+    plt.ylabel('True label', fontsize = 15)
+    plt.xlabel('Predicted label', fontsize = 15)
+    
+plot_confusion_matrix(confusion_mtx, indices = indices) 
+```
 
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig14.png)
 
+```
+print(classification_report(Y_true,Y_pred_classes,target_names =['akiec', 'bcc', 'bkl','df', 'mel', 'nv','vasc' ]))
+```
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig15.png)
 
+The f1 score for nv class is highest and over 0.88. The f1-score on df, akiec and mel are less than 0.5 which sugessted that the prediction on these three type are less accurate.
 
+```
+# plot the mistypes of prediction for every class
+label_frac_error = 1 - np.diag(confusion_mtx) / np.sum(confusion_mtx, axis=1)
+plt.bar(np.arange(7),label_frac_error)
+plt.xlabel('True Label')
+tick_mark = np.arange(len(indices))
+plt.xticks (tick_mark, indices.keys(),  fontsize = 13)
+plt.ylabel('Fraction classified incorrectly')
+```
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig16.png)
 
+It seems that the maximum number of incorrect predicitons are features mel and then df and akiec. The nv has least misclassified type. 
+
+```
+# ramdomly plot images in testing folder with the predicted and true case.
+test_generator.reset()
+x=np.concatenate([test_generator.next()[0] for i in range(test_generator.__len__())])
+y=np.concatenate([test_generator.next()[1] for i in range(test_generator.__len__())])
+#print(x.shape)
+#print(y.shape)
+dic = { 0 : 'akiec', 1: 'bcc', 2: 'bkl',3: 'df', 4: 'mel',5: 'nv',6: 'vasc'}
+plt.figure(figsize=(20,14))
+
+#for i in range(0+200, 9+200):
+for idx, i in enumerate(np.random.randint(1, 2003, 6)):    
+    plt.subplot(2, 3, idx+1)
+    out = str()
+    for j in range(0,6):
+        if Y_pred[i][j] > 0.1:
+            out += '{:.2%} probability of being {} case'.format(Y_pred[i][j], dic[j]) + '\n'
+        #else: out = 'None'
+      
+    
+    plt.title(out +"\n Actual case :" + dic[Y_true[i]])    
+    plt.imshow(np.squeeze(x[i]))
+    plt.axis('off')
+plt.show()
+```
+![](https://raw.githubusercontent.com/sachenl/project5/main/images/fig17.png)
+
+## **Conclusion**
+
+We are able to extract the information of skin cancer from the metadata and explore the distribution on varies features. The most often age of skin cancer ocur is around 45. 
+
+We make one cnn model which can fit and predict the type of skin cancer well base on the images. The accuracy is 74.9% which is more efficient compare to detection with human eyes.
 
